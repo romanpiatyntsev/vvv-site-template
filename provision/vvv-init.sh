@@ -22,10 +22,12 @@ HTML_REPO=$(get_config_value 'html_repo' "#")
 
 
 # Make a database, if we don't already have one
+echo -e " * Creating database user '${DB_USER}'"
+mysql -u root --password=root "CREATE USER '${DB_USER}'@localhost IDENTIFIED BY '${DB_PASS}'";
 echo -e " * Creating database '${DB_NAME}' (if it's not already there)"
 mysql -u root --password=root -e "CREATE DATABASE IF NOT EXISTS \`${DB_NAME}\`"
 echo -e " * Granting the wp user priviledges to the '${DB_NAME}' database"
-mysql -u root --password=root -e "GRANT ALL PRIVILEGES ON \`${DB_NAME}\`.* TO ${DB_USER}@localhost IDENTIFIED BY '${DB_USER}';"
+mysql -u root --password=root -e "GRANT ALL PRIVILEGES ON \`${DB_NAME}\`.* TO '${DB_USER}'@'localhost' IDENTIFIED BY '${DB_USER}';"
 echo -e " * DB operations done."
 
 
