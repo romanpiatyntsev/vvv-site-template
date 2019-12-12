@@ -12,13 +12,20 @@ WP_VERSION=$(get_config_value 'wp_version' 'latest')
 WP_LOCALE=$(get_config_value 'locale' 'en_US')
 WP_TYPE=$(get_config_value 'wp_type' "single")
 DB_NAME=$(get_config_value 'db_name' "${VVV_SITE_NAME}")
+DB_PREFIX=$(get_config_value 'db_prefix' "wp_")
+DB_USER=$(get_config_value 'db_user' "wp")
+DB_PASS=$(get_config_value 'db_pass' "wp")
 DB_NAME=${DB_NAME//[\\\/\.\<\>\:\"\'\|\?\!\*]/}
+
+WP_REPO=$(get_config_value 'wp_repo' "#")
+HTML_REPO=$(get_config_value 'html_repo' "#")
+
 
 # Make a database, if we don't already have one
 echo -e " * Creating database '${DB_NAME}' (if it's not already there)"
 mysql -u root --password=root -e "CREATE DATABASE IF NOT EXISTS \`${DB_NAME}\`"
 echo -e " * Granting the wp user priviledges to the '${DB_NAME}' database"
-mysql -u root --password=root -e "GRANT ALL PRIVILEGES ON \`${DB_NAME}\`.* TO wp@localhost IDENTIFIED BY 'wp';"
+mysql -u root --password=root -e "GRANT ALL PRIVILEGES ON \`${DB_NAME}\`.* TO ${DB_USER}@localhost IDENTIFIED BY '${DB_USER}';"
 echo -e " * DB operations done."
 
 
@@ -27,8 +34,13 @@ noroot mkdir -p "${VVV_PATH_TO_SITE}/log"
 noroot touch "${VVV_PATH_TO_SITE}/log/nginx-error.log"
 noroot touch "${VVV_PATH_TO_SITE}/log/nginx-access.log"
 
-echo " * Creating public_html folder if it doesn't exist already"
-noroot mkdir -p "${VVV_PATH_TO_SITE}/public_html"
+echo " * Clone wp-repo to public_html folder if it doesn't exist already"
+# noroot mkdir -p "${VVV_PATH_TO_SITE}/public_html"
+hg clone ${HTML_REPO} "${VVV_PATH_TO_SITE}/html"
+
+if [ ! -d "${VVV_PATH_TO_SITE}/public_html" ] 
+then
+  hg clone ${WP_REPO} "${VVV_PATH_TO_SITE}/public_html"
 
 if [ "${WP_TYPE}" != "none" ]; then
 
@@ -40,7 +52,7 @@ if [ "${WP_TYPE}" != "none" ]; then
 
   if [[ ! -f "${VVV_PATH_TO_SITE}/public_html/wp-config.php" ]]; then
     echo " * Configuring WordPress"
-    noroot wp core config --dbname="${DB_NAME}" --dbuser=wp --dbpass=wp --quiet --extra-php <<PHP
+    noroot wp core config --dbname="${DB_NAME}" --dbuser="${DB_USER}" --dbpass="${DB_PASS}" --dbprefix="${DB_PREFIX}" --quiet --extra-php <<PHP
 define( 'WP_DEBUG', true );
 define( 'SCRIPT_DEBUG', true );
 PHP
@@ -50,16 +62,16 @@ PHP
     echo "WordPress is present but isn't installed to the database, checking for SQL dumps in wp-content/database.sql or the main backup folder."
     if [ -f "${VVV_PATH_TO_SITE}/public_html/wp-content/database.sql" ]; then
       echo "Found database backup on site directory. Installing site from there..."
-      noroot wp config set DB_USER "wp"
-      noroot wp config set DB_PASSWORD "wp"
+      noroot wp config set DB_USER "${DB_USER}"
+      noroot wp config set DB_PASSWORD "${DB_PASS}"
       noroot wp config set DB_HOST "localhost"
       noroot wp config set DB_NAME "${DB_NAME}"
       noroot wp db import "${VVV_PATH_TO_SITE}/public_html/wp-content/database.sql"
       echo "Installed database backup"
     elif [ -f "/srv/database/backups/${VVV_SITE_NAME}.sql" ]; then
       echo " * Found database backup in the backups directory. Installing site from there..."
-      noroot wp config set DB_USER "wp"
-      noroot wp config set DB_PASSWORD "wp"
+      noroot wp config set DB_USER "${DB_USER}"
+      noroot wp config set DB_PASSWORD "${DB_PASS}"
       noroot wp config set DB_HOST "localhost"
       noroot wp config set DB_NAME "${DB_NAME}"
       noroot wp db import "/srv/database/backups/${VVV_SITE_NAME}.sql"
