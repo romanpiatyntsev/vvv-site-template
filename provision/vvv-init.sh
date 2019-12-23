@@ -3,6 +3,8 @@
 
 set -eo pipefail
 
+sudo apt-get install mercurial
+
 echo " * Custom site template provisioner - downloads and installs a copy of WP stable for testing, building client sites, etc"
 
 # fetch the first host as the primary domain. If none is available, generate a default using the site name
@@ -22,13 +24,13 @@ HTML_REPO=$(get_config_value 'html_repo' "#")
 
 
 # Make a database, if we don't already have one
-mysql -u root --password=root -e "FLUSH PRIVILEGES;"
-mysql -u root --password=root -e "CREATE USER ${DB_USER}@'localhost' IDENTIFIED BY ${DB_PASS};"
 
 echo -e " * Creating database '${DB_NAME}' (if it's not already there)"
 mysql -u root --password=root -e "CREATE DATABASE IF NOT EXISTS \`${DB_NAME}\`;"
+
 echo -e " * Granting the wp user priviledges to the '${DB_NAME}' database"
-mysql -u root --password=root -e "GRANT ALL PRIVILEGES ON \`${DB_NAME}\`.* TO '${DB_USER}'@'localhost';"
+mysql -u root --password=root -e "GRANT ALL PRIVILEGES ON *.* TO '${DB_USER}'@'localhost' IDENTIFIED BY '${DB_PASS}';"
+mysql -u root --password=root -e "FLUSH PRIVILEGES;"
 echo -e " * DB operations done."
 
 
@@ -42,7 +44,7 @@ echo " * Clone wp-repo to public_html folder if it doesn't exist already"
 noroot mkdir -p "${VVV_PATH_TO_SITE}/html"
 noroot mkdir -p "${VVV_PATH_TO_SITE}/public_html"
 
-# hg clone ${HTML_REPO} "${VVV_PATH_TO_SITE}/html"
+hg clone ${HTML_REPO} "${VVV_PATH_TO_SITE}/html"
 
 # if [ ! -d "${VVV_PATH_TO_SITE}/public_html" ] 
 # then
