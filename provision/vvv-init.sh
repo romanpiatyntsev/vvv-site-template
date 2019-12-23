@@ -23,7 +23,7 @@ HTML_REPO=$(get_config_value 'html_repo' "#")
 
 # Make a database, if we don't already have one
 mysql -u root --password=root -e "FLUSH PRIVILEGES;"
-mysql -u root --password=root -e "CREATE USER \`${DB_USER}\`@'localhost' IDENTIFIED BY \`${DB_PASS}\`;"
+mysql -u root --password=root -e "CREATE USER ${DB_USER}@'localhost' IDENTIFIED BY ${DB_PASS};"
 
 echo -e " * Creating database '${DB_NAME}' (if it's not already there)"
 mysql -u root --password=root -e "CREATE DATABASE IF NOT EXISTS \`${DB_NAME}\`;"
@@ -46,7 +46,7 @@ noroot mkdir -p "${VVV_PATH_TO_SITE}/public_html"
 
 # if [ ! -d "${VVV_PATH_TO_SITE}/public_html" ] 
 # then
-#   hg clone ${WP_REPO} "${VVV_PATH_TO_SITE}/public_html"
+# hg clone ${WP_REPO} "${VVV_PATH_TO_SITE}/public_html"
 
 if [ "${WP_TYPE}" != "none" ]; then
 
