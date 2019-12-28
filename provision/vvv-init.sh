@@ -27,9 +27,9 @@ HTML_REPO=$(get_config_value 'html_repo' "#")
 echo -e " * Creating database '${DB_NAME}' (if it's not already there)"
 mysql -u root --password=root -e "CREATE DATABASE IF NOT EXISTS \`${DB_NAME}\`;"
 
-echo -e " * Granting the wp user priviledges to the '${DB_NAME}' database"
-mysql -u root --password=root -e "GRANT ALL ON *.* TO 'builtwit_clients'@'localhost' IDENTIFIED BY 'Oz$N.L8zA2W0';"
-mysql -u root --password=root -e "FLUSH PRIVILEGES;"
+#echo -e " * Granting the wp user priviledges to the '${DB_NAME}' database"
+#mysql -u root --password=root -e "GRANT ALL ON *.* TO 'builtwit_clients'@'localhost' IDENTIFIED BY 'Oz$N.L8zA2W0';"
+#mysql -u root --password=root -e "FLUSH PRIVILEGES;"
 echo -e " * DB operations done."
 
 
@@ -38,7 +38,7 @@ noroot mkdir -p "${VVV_PATH_TO_SITE}/log"
 noroot touch "${VVV_PATH_TO_SITE}/log/nginx-error.log"
 noroot touch "${VVV_PATH_TO_SITE}/log/nginx-access.log"
 
-echo " * Clone wp-repo to public_html folder if it doesn't exist already"
+#echo " * Clone wp-repo to public_html folder if it doesn't exist already"
 
 #noroot mkdir -p "${VVV_PATH_TO_SITE}/html"
 noroot mkdir -p "${VVV_PATH_TO_SITE}/public_html"
