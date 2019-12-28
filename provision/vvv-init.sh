@@ -40,10 +40,10 @@ noroot touch "${VVV_PATH_TO_SITE}/log/nginx-access.log"
 
 echo " * Clone wp-repo to public_html folder if it doesn't exist already"
 
-noroot mkdir -p "${VVV_PATH_TO_SITE}/html"
+#noroot mkdir -p "${VVV_PATH_TO_SITE}/html"
 noroot mkdir -p "${VVV_PATH_TO_SITE}/public_html"
 
-hg clone ${HTML_REPO} "${VVV_PATH_TO_SITE}/html"
+#hg clone ${HTML_REPO} "${VVV_PATH_TO_SITE}/html"
 
 # if [ ! -d "${VVV_PATH_TO_SITE}/public_html" ] 
 # then
