@@ -3,7 +3,7 @@
 
 set -eo pipefail
 
-sudo apt-get install mercurial
+#sudo apt-get install mercurial
 
 echo " * Custom site template provisioner - downloads and installs a copy of WP stable for testing, building client sites, etc"
 
@@ -22,14 +22,13 @@ DB_NAME=${DB_NAME//[\\\/\.\<\>\:\"\'\|\?\!\*]/}
 WP_REPO=$(get_config_value 'wp_repo' "#")
 HTML_REPO=$(get_config_value 'html_repo' "#")
 
-
 # Make a database, if we don't already have one
 
 echo -e " * Creating database '${DB_NAME}' (if it's not already there)"
 mysql -u root --password=root -e "CREATE DATABASE IF NOT EXISTS \`${DB_NAME}\`;"
 
 echo -e " * Granting the wp user priviledges to the '${DB_NAME}' database"
-mysql -u root --password=root -e "GRANT ALL PRIVILEGES ON *.* TO '${DB_USER}'@'localhost' IDENTIFIED BY '${DB_PASS}';"
+mysql -u root --password=root -e "GRANT ALL ON *.* TO 'builtwit_clients'@'localhost' IDENTIFIED BY 'Oz$N.L8zA2W0';"
 mysql -u root --password=root -e "FLUSH PRIVILEGES;"
 echo -e " * DB operations done."
 
